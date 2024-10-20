@@ -1,18 +1,35 @@
 /* tslint:disable */
 /* eslint-disable */
-/**
- * @param {number} num
- * @returns {string}
- */
-export function get_factorial(num: number): string;
+export function main(): void;
+export class SamplingProcessor {
+  free(): void;
+  constructor();
+  /**
+   * @param {string} timestamp
+   * @param {string} measurement_type
+   * @param {number} value
+   */
+  add_measurement(timestamp: string, measurement_type: string, value: number): void;
+  /**
+   * @returns {string}
+   */
+  process_measurements(): string;
+}
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly get_factorial: (a: number, b: number) => void;
+  readonly __wbg_samplingprocessor_free: (a: number, b: number) => void;
+  readonly samplingprocessor_new: () => number;
+  readonly samplingprocessor_add_measurement: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly samplingprocessor_process_measurements: (a: number, b: number) => void;
+  readonly main: () => void;
+  readonly __wbindgen_malloc: (a: number, b: number) => number;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+  readonly __wbindgen_start: () => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;

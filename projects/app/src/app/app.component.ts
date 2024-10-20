@@ -1,5 +1,12 @@
 import { ChangeDetectionStrategy, Component, type OnInit, signal } from '@angular/core';
-import { get_factorial, initSampler } from 'sampler';
+import { SamplingProcessor, initSampler } from 'sampler';
+
+interface Measurement {
+  timestamp: string;
+  measurement_type: string;
+  value: number;
+}
+
 
 @Component({
   selector: 'app-root',
@@ -10,43 +17,71 @@ import { get_factorial, initSampler } from 'sampler';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  jsResult = signal<string>('');
-  rsResult = signal<string>('');
-  jsTime = signal<string>('');
-  rsTime = signal<string>('');
-  calculating = signal<boolean>(false);
+  sampledMeasurements: Measurement[] = [];
+  errorMessage: string = '';
+  private processor: SamplingProcessor | null = null;
 
-  ngOnInit() {
-    initSampler();
+  async ngOnInit() {
+    try {
+      await initSampler();
+      this.processor = new SamplingProcessor();
+    } catch (error) {
+      this.errorMessage = 'Failed to initialize WASM module';
+      console.error(error);
+    }
   }
 
-  calculate(inp: number | string) {
-    this.calculating.set(true);
+  async onFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    console.log(file);
+    if (!file || !this.processor) return;
 
-    setTimeout(() => {
-      const n = typeof inp === 'number' ? inp : parseInt(inp, 10);
-      const jsTimeStart = performance.now();
-      let f = 0;
-      for (let i = 0; i < 10000000; i++) {
-        f = factorial(n);
-      }
-      this.jsResult.set(f.toString());
-      this.jsTime.set(((performance.now() - jsTimeStart) / 1000).toFixed(4) + 's');
+    try {
+      const text = await file.text();
+      // console.log(text);
+      const measurements = this.parseMeasurements(text);
+      // console.log(measurements);
 
-      const rsTimeStart = performance.now();
-      this.rsResult.set(get_factorial(n));
-      this.rsTime.set(((performance.now() - rsTimeStart) / 1000).toFixed(4) + 's');
+      // Add measurements to the WASM processor
+      measurements.forEach((m) => {
+        this.processor!.add_measurement(
+          m.timestamp,
+          m.measurement_type,
+          m.value
+        );
+      });
 
-      this.calculating.set(false);
-    }, 50);
+      // Process and update the UI
+      // TODO: fix this
+      // returning []
+      const sampledData = this.processor.process_measurements();
+      console.log(sampledData);
+      this.sampledMeasurements = JSON.parse(sampledData);
+      this.errorMessage = '';
+    } catch (error) {
+      this.errorMessage = 'Error processing file';
+      console.error(error);
+    }
+  }
+
+  private parseMeasurements(text: string): Measurement[] {
+    return text
+      .split('\n')
+      .filter((line) => line.trim())
+      .map((line) => {
+        // Remove curly braces and split by comma
+        const [timestamp, type, value] = line
+          .replace(/{|}/g, '')
+          .split(',')
+          .map((s) => s.trim());
+
+        return {
+          timestamp,
+          measurement_type: type,
+          value: parseFloat(value),
+        };
+      });
   }
 }
 
 
-function factorial(x: number): number {
-  if (x === 0) {
-    return 1;
-  } else {
-    return x * factorial(x - 1);
-  }
-}
