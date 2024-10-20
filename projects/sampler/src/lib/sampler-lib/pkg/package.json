@@ -1,0 +1,15 @@
+{
+  "name": "sampler-lib",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "sampler_lib_bg.wasm",
+    "sampler_lib.js",
+    "sampler_lib.d.ts"
+  ],
+  "main": "sampler_lib.js",
+  "types": "sampler_lib.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
