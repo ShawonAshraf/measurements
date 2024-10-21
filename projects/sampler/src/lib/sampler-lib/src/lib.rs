@@ -43,11 +43,19 @@ fn utc_to_str(utc: &DateTime<chrono::Utc>) -> String {
 fn round_timestamp_to_boundary(ts: &String) -> String{
     let dt = str_to_utc(ts);
     let start = get_interval_start(dt);
+
+
+    // if start = dt
+    if start == dt {
+        return utc_to_str(&start);
+    }
+
     let duration = Duration::minutes(5);
     let interval = start + duration;
 
     utc_to_str(&interval)
 }
+
 
 
 fn find_latest_in_interval(samples: &Vec<&Measurement>) -> Vec<usize> {
