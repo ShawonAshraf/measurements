@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, type OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, type OnInit, ChangeDetectorRef } from '@angular/core';
 import { SamplingProcessor, initSampler } from 'sampler';
 
 interface Measurement {
@@ -14,13 +14,14 @@ interface Measurement {
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-
 })
 export class AppComponent implements OnInit {
   sampledMeasurements: Measurement[] = [];
-  m: String = "Sampler Component";
+  m: String = 'Sampler Component';
   errorMessage: string = '';
   private processor: SamplingProcessor | null = null;
+
+  constructor(private cd: ChangeDetectorRef) {}
 
   async ngOnInit() {
     try {
@@ -53,13 +54,10 @@ export class AppComponent implements OnInit {
       const sampledData = this.processor.process_measurements();
       this.sampledMeasurements = JSON.parse(sampledData);
       this.errorMessage = '';
-      console.log(this.sampledMeasurements);
-
-      return this.sampledMeasurements;
+      this.cd.detectChanges();
     } catch (error) {
       this.errorMessage = 'Error processing file';
       console.error(error);
-      return [];
     }
   }
 
