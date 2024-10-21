@@ -1,8 +1,9 @@
 // lib.rs
 use wasm_bindgen::prelude::*;
-use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Timelike, Duration, Utc, NaiveDateTime, TimeZone};
 use std::collections::HashMap;
+
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Measurement {
@@ -10,6 +11,8 @@ pub struct Measurement {
     measurement_type: String,
     value: f64,
 }
+
+
 
 fn get_interval_start(timestamp: DateTime<chrono::Utc>) -> DateTime<chrono::Utc> {
     let minutes = timestamp.minute();
@@ -97,7 +100,7 @@ fn find_latest_in_interval(samples: &Vec<&Measurement>) -> Vec<usize> {
     results
 }
 
-fn _sample(samples: &Vec<Measurement>) -> Vec<Measurement> {
+fn sample(samples: &Vec<Measurement>) -> Vec<Measurement> {
     let mut results: Vec<Measurement> = Vec::new();
 
     // group by type
@@ -141,13 +144,32 @@ fn _sample(samples: &Vec<Measurement>) -> Vec<Measurement> {
 }
 
 #[wasm_bindgen]
-pub fn sample(samples: Vec<Measurement>) -> String {
-    let results = _sample(&samples);
-
-    serde_json::to_string(&results).unwrap()
-
+pub struct SamplingProcessor {
+    measurements: Vec<Measurement>,
 }
 
+#[wasm_bindgen]
+impl SamplingProcessor {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> SamplingProcessor {
+        SamplingProcessor {
+            measurements: Vec::new(),
+        }
+    }
+
+    pub fn add_measurement(&mut self, timestamp: String, measurement_type: String, value: f64) {
+        self.measurements.push(Measurement {
+            timestamp,
+            measurement_type,
+            value,
+        });
+    }
+
+    pub fn process_measurements(&self) -> String {
+        let results = sample(&self.measurements);
+        serde_json::to_string(&results).unwrap_or_default()
+    }
+}
 
 
 
