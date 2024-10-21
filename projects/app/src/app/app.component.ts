@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, type OnInit, ChangeDetectorRef } from '@angular/core';
 import { SamplingProcessor, initSampler } from 'sampler';
 
+// interface similar to the one in the wasm module
 interface Measurement {
   timestamp: string;
   measurement_type: string;
@@ -18,7 +19,9 @@ interface Measurement {
 export class AppComponent implements OnInit {
   sampledMeasurements: Measurement[] = [];
   m: String = 'Sampler Component';
+  
   errorMessage: string = '';
+
   private processor: SamplingProcessor | null = null;
 
   constructor(private cd: ChangeDetectorRef) {}
@@ -63,6 +66,7 @@ export class AppComponent implements OnInit {
     }
   }
 
+  // the wasm returns json data, so we need to parse it
   private parseMeasurements(text: string): Measurement[] {
     return text
       .split('\n')

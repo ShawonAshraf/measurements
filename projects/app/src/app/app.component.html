@@ -8,11 +8,15 @@
       (change)="onFileSelected($event)"
       #fileUpload
     />
-    <button
-      (click)="fileUpload.click()"
-    >
-      Import Measurements File
-    </button>
+    <button (click)="fileUpload.click()">Import Measurements File</button>
+  </div>
+
+  <div>
+    @if (errorMessage) {
+      <div id="error">
+        {{ errorMessage }}
+      </div>
+    }
   </div>
 
   <div>
@@ -39,10 +43,10 @@
       </table>
     </div>
     } @else {
-      <br>
-      <br>
-      <br>
-      <i>Import a data file to get sampled results</i>
+    <br />
+    <br />
+    <br />
+    <i>Import a data file to get sampled results</i>
     }
   </div>
 </div>
