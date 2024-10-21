@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, type OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, type OnInit } from '@angular/core';
 import { SamplingProcessor, initSampler } from 'sampler';
 
 interface Measurement {
@@ -54,9 +54,12 @@ export class AppComponent implements OnInit {
       this.sampledMeasurements = JSON.parse(sampledData);
       this.errorMessage = '';
       console.log(this.sampledMeasurements);
+
+      return this.sampledMeasurements;
     } catch (error) {
       this.errorMessage = 'Error processing file';
       console.error(error);
+      return [];
     }
   }
 

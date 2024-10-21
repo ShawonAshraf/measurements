@@ -4,22 +4,15 @@
   <div>
     <input
       type="file"
-      class="hidden"
-      #fileInput
+      class="file-input"
       (change)="onFileSelected($event)"
-      accept=".txt,.csv"
+      #fileUpload
     />
     <button
-      (click)="fileInput.click()"
-      class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      (click)="fileUpload.click()"
     >
       Import Measurements File
     </button>
-  </div>
-
-  <div>
-    {{ m }}
-    {{ sampledMeasurements.length }}
   </div>
 
   <div>
@@ -45,6 +38,8 @@
         </tbody>
       </table>
     </div>
+    } @else {
+      <p>No data has been imported yet!</p>
     }
   </div>
 </div>
