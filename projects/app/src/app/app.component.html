@@ -1,4 +1,4 @@
-<div>
+<div id="container">
   <h1>Measurements Sampler</h1>
 
   <div>
@@ -19,7 +19,7 @@
     @if (sampledMeasurements.length) {
     <h2>Sampled Measurements</h2>
     <div>
-      <table>
+      <table id="data">
         <thead>
           <tr>
             <th>Timestamp</th>
@@ -39,7 +39,10 @@
       </table>
     </div>
     } @else {
-      <p>No data has been imported yet!</p>
+      <br>
+      <br>
+      <br>
+      <i>Import a data file to get sampled results</i>
     }
   </div>
 </div>
