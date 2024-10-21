@@ -9,31 +9,42 @@
       (change)="onFileSelected($event)"
       accept=".txt,.csv"
     />
+    <button
+      (click)="fileInput.click()"
+      class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+    >
+      Import Measurements File
+    </button>
+  </div>
+
+  <div>
+    {{ m }}
+    {{ sampledMeasurements.length }}
   </div>
 
   <div>
     @if (sampledMeasurements.length) {
-      <h2>Sampled Measurements</h2>
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Type</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (measurement of sampledMeasurements; track $index) {
-              <tr>
-                <td>{{ measurement.timestamp }}</td>
-                <td>{{ measurement.measurement_type }}</td>
-                <td>{{ measurement.value.toFixed(2) }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+    <h2>Sampled Measurements</h2>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Type</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (measurement of sampledMeasurements; track $index) {
+          <tr>
+            <td>{{ measurement.timestamp }}</td>
+            <td>{{ measurement.measurement_type }}</td>
+            <td>{{ measurement.value.toFixed(2) }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
     }
   </div>
 </div>

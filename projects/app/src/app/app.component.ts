@@ -7,17 +7,18 @@ interface Measurement {
   value: number;
 }
 
-
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class AppComponent implements OnInit {
   sampledMeasurements: Measurement[] = [];
+  m: String = "Sampler Component";
   errorMessage: string = '';
   private processor: SamplingProcessor | null = null;
 
@@ -52,6 +53,7 @@ export class AppComponent implements OnInit {
       const sampledData = this.processor.process_measurements();
       this.sampledMeasurements = JSON.parse(sampledData);
       this.errorMessage = '';
+      console.log(this.sampledMeasurements);
     } catch (error) {
       this.errorMessage = 'Error processing file';
       console.error(error);
