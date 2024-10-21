@@ -49,3 +49,16 @@ cargo test
 npm run test app
 ```
 
+### Test inputs for frontend
+
+These readings are taken from the instruction document.
+
+```text
+{2017-01-03T10:04:45, TEMP, 35.79}
+{2017-01-03T10:01:18, SPO2, 98.78}
+{2017-01-03T10:09:07, TEMP, 35.01}
+{2017-01-03T10:03:34, SPO2, 96.49}
+{2017-01-03T10:02:01, TEMP, 35.82}
+{2017-01-03T10:05:00, SPO2, 97.17}
+{2017-01-03T10:05:01, SPO2, 95.08}
+```
