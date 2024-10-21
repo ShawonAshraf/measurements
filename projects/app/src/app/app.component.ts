@@ -17,10 +17,9 @@ interface Measurement {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  sampledMeasurements: Measurement[] = [];
-  m: String = 'Sampler Component';
-  
+  sampledMeasurements: Measurement[] = [];  
   errorMessage: string = '';
+  title = 'app';
 
   private processor: SamplingProcessor | null = null;
 

@@ -36,3 +36,16 @@ python3 -m http.server -d ./dist/app/browser
 # or,
 python -m http.server -d ./dist/app/browser
 ```
+
+## Tests
+    
+```bash
+# wasm
+cd ./projects/sampler/src/lib/sampler-lib
+cargo test
+
+# frontend
+# from the project root
+npm run test app
+```
+
