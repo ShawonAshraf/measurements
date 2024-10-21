@@ -21,8 +21,10 @@ export class AppComponent implements OnInit {
   errorMessage: string = '';
   title = 'app';
 
+  // wasm sampler processor
   private processor: SamplingProcessor | null = null;
 
+  // change detector to manually trigger change detection
   constructor(private cd: ChangeDetectorRef) {}
 
   async ngOnInit() {
