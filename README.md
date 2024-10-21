@@ -1,27 +1,38 @@
 # Measurements
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.9.
+## Prerequisites
 
-## Development server
+- `wasm-pack` needs to be installed
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Running locally
 
-## Code scaffolding
+### Frontend
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
 
-## Build
+# install the angular workspace dependencies
+npm install
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+# build the wasm module
+# from the project root, navigate to the wasm module library location
+cd ./projects/sampler/src/lib/sampler-lib
+# generate wasm bundle
+wasm-pack build --target web
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## serve the angular app
+ng serve
 
-## Running end-to-end tests
+## to create a production ready build
+npm run build app --prod
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```
 
-## Further help
+### Serving a production build with python
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+# via python
+python3 -m http.server -d ./dist/app/browser
+# or,
+python -m http.server -d ./dist/app/browser
+```
