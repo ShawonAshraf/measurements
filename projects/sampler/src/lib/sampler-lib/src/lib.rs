@@ -1,7 +1,7 @@
 // lib.rs
-use wasm_bindgen::prelude::*;
-use chrono::{DateTime, Timelike, Duration, Utc, NaiveDateTime, TimeZone};
+use chrono::{DateTime, Duration, NaiveDateTime, TimeZone, Timelike, Utc};
 use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
@@ -12,38 +12,39 @@ pub struct Measurement {
     value: f64,
 }
 
-
-
+// find the start of the interval for a timestamp
 fn get_interval_start(timestamp: DateTime<chrono::Utc>) -> DateTime<chrono::Utc> {
     let minutes = timestamp.minute();
     let interval = (minutes / 5) * 5;
     timestamp
-        .with_minute(interval).unwrap()
-        .with_second(0).unwrap()
-        .with_nanosecond(0).unwrap()
+        .with_minute(interval)
+        .unwrap()
+        .with_second(0)
+        .unwrap()
+        .with_nanosecond(0)
+        .unwrap()
 }
 
-
+// convert from string timestamp to utc
 fn str_to_utc(ts: &String) -> DateTime<chrono::Utc> {
-    let naive_ts = NaiveDateTime::parse_from_str(&ts, "%Y-%m-%dT%H:%M:%S")
-        .unwrap();
+    let naive_ts = NaiveDateTime::parse_from_str(&ts, "%Y-%m-%dT%H:%M:%S").unwrap();
     Utc.from_utc_datetime(&naive_ts)
-
 }
 
+// convert from utc to formatted string
 fn utc_to_str(utc: &DateTime<chrono::Utc>) -> String {
     let str = utc.to_string();
     let parts = str.split(" ").collect::<Vec<&str>>();
     let formatted_str = parts[0].to_string() + "T" + parts[1];
 
     formatted_str
-
 }
 
-fn round_timestamp_to_boundary(ts: &String) -> String{
+// round timestamp to the nearest interval boundary
+// if timestamp is already at the boundary, return the same timestamp
+fn round_timestamp_to_boundary(ts: &String) -> String {
     let dt = str_to_utc(ts);
     let start = get_interval_start(dt);
-
 
     // if start = dt
     if start == dt {
@@ -56,8 +57,8 @@ fn round_timestamp_to_boundary(ts: &String) -> String{
     utc_to_str(&interval)
 }
 
-
-
+// find the indexes of the latest values in an interval
+// for a given list of measurements
 fn find_latest_in_interval(samples: &Vec<&Measurement>) -> Vec<usize> {
     let mut timestamps: Vec<DateTime<chrono::Utc>> = Vec::new();
     let mut index_map: HashMap<DateTime<chrono::Utc>, usize> = HashMap::new();
@@ -68,15 +69,12 @@ fn find_latest_in_interval(samples: &Vec<&Measurement>) -> Vec<usize> {
         index_map.insert(parsed, i);
     }
 
-
     timestamps.sort();
-
 
     let mut current_interval_start = get_interval_start(timestamps[0]);
     let mut current_latest = timestamps[0];
     let mut latest_in_intervals: Vec<DateTime<Utc>> = Vec::new();
     let interval_duration = Duration::minutes(5);
-
 
     let n = timestamps.len();
     for i in 0..n {
@@ -95,9 +93,7 @@ fn find_latest_in_interval(samples: &Vec<&Measurement>) -> Vec<usize> {
         if i + 1 == n {
             latest_in_intervals.push(t);
         }
-
     }
-
 
     let mut results: Vec<usize> = Vec::new();
     for v in latest_in_intervals {
@@ -108,6 +104,7 @@ fn find_latest_in_interval(samples: &Vec<&Measurement>) -> Vec<usize> {
     results
 }
 
+// sample the latest values in an interval
 fn sample(samples: &Vec<Measurement>) -> Vec<Measurement> {
     let mut results: Vec<Measurement> = Vec::new();
 
@@ -123,7 +120,6 @@ fn sample(samples: &Vec<Measurement>) -> Vec<Measurement> {
 
     let keys: Vec<String> = type_grouped.keys().cloned().collect();
 
-
     for key in keys {
         // get the samples for key
         let samples_k = type_grouped.get(&key).unwrap();
@@ -137,16 +133,13 @@ fn sample(samples: &Vec<Measurement>) -> Vec<Measurement> {
             let ts = samples_k[idx].timestamp.clone();
             let rounded = round_timestamp_to_boundary(&ts);
 
-            results.push(
-                Measurement {
-                    timestamp: rounded,
-                    measurement_type: samples_k[idx].measurement_type.clone(),
-                    value: samples_k[idx].value.clone(),
-                }
-            )
+            results.push(Measurement {
+                timestamp: rounded,
+                measurement_type: samples_k[idx].measurement_type.clone(),
+                value: samples_k[idx].value.clone(),
+            })
         }
     }
-
 
     results
 }
@@ -156,6 +149,7 @@ pub struct SamplingProcessor {
     measurements: Vec<Measurement>,
 }
 
+// module for wasm bindings
 #[wasm_bindgen]
 impl SamplingProcessor {
     #[wasm_bindgen(constructor)]
@@ -178,8 +172,6 @@ impl SamplingProcessor {
         serde_json::to_string(&results).unwrap_or_default()
     }
 }
-
-
 
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
