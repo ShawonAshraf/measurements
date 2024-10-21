@@ -54,6 +54,8 @@ export class AppComponent implements OnInit {
       const sampledData = this.processor.process_measurements();
       this.sampledMeasurements = JSON.parse(sampledData);
       this.errorMessage = '';
+
+      // render the table immediately
       this.cd.detectChanges();
     } catch (error) {
       this.errorMessage = 'Error processing file';
