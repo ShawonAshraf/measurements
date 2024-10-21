@@ -33,16 +33,13 @@ export class AppComponent implements OnInit {
 
   async onFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    console.log(file);
     if (!file || !this.processor) return;
 
     try {
       const text = await file.text();
-      // console.log(text);
       const measurements = this.parseMeasurements(text);
-      // console.log(measurements);
 
-      // Add measurements to the WASM processor
+      // add data
       measurements.forEach((m) => {
         this.processor!.add_measurement(
           m.timestamp,
@@ -51,11 +48,8 @@ export class AppComponent implements OnInit {
         );
       });
 
-      // Process and update the UI
-      // TODO: fix this
-      // returning []
+      // update UI with processed or sampled data
       const sampledData = this.processor.process_measurements();
-      console.log(sampledData);
       this.sampledMeasurements = JSON.parse(sampledData);
       this.errorMessage = '';
     } catch (error) {
@@ -69,7 +63,7 @@ export class AppComponent implements OnInit {
       .split('\n')
       .filter((line) => line.trim())
       .map((line) => {
-        // Remove curly braces and split by comma
+        // remove curly braces and split by comma
         const [timestamp, type, value] = line
           .replace(/{|}/g, '')
           .split(',')
